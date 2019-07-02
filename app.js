@@ -8,7 +8,7 @@ const app = express();
 const port = 3001;
 
 
-app.use(adminRoutes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
