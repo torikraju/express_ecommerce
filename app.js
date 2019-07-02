@@ -8,6 +8,9 @@ const shopRoutes = require('./routes/shop');
 const app = express();
 const port = 3001;
 
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
 //for form body
 app.use(bodyParser.urlencoded({extended: false}));
 //for serving static file
@@ -18,7 +21,10 @@ app.use(shopRoutes);
 
 //catch 404 error
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    res.status(404).render('404', {
+        pageTitle: 'Page not found',
+        path: '/'
+    });
 });
 
 
