@@ -3,6 +3,7 @@ const path = require('path');
 const rootDir = require('../util/path');
 
 const p = path.join(rootDir, 'data', 'products.json');
+const Cart = require('./cart');
 
 const getProductsFromFile = (cb) => {
   // eslint-disable-next-line consistent-return
@@ -52,4 +53,17 @@ module.exports = class Product {
       cb(product);
     });
   }
+
+  static deleteById(id) {
+    getProductsFromFile((products) => {
+      const product = products.find(prod => prod.id === id);
+      const updatedProducts = products.filter(prod => prod.id !== id);
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+        if (!err) {
+          Cart.deleteProduct(id, product.price);
+        }
+      });
+    });
+  }
+
 };

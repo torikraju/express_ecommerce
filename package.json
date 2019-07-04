@@ -49,7 +49,8 @@
         "off"
       ],
       "no-console": "off",
-      "dot-notation": "off"
+      "dot-notation": "off",
+      "array-callback-return": "off"
     }
   }
 }

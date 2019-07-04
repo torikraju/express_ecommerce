@@ -13,11 +13,12 @@ module.exports = class Cart {
         products: [],
         totalPrice: 0
       };
-      if (err) {
+      if (!err) {
         cart = JSON.parse(fileContent);
       }
-
-      const existingProductIndex = cart.products.find(prod => prod.id === id);
+      const existingProductIndex = cart.products.findIndex(
+        prod => prod.id === id
+      );
       const existingProduct = cart.products[existingProductIndex];
       let updatedProduct;
       if (existingProduct) {
@@ -34,7 +35,38 @@ module.exports = class Cart {
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice += +productPrice;
-      fs.writeFile(p, JSON.stringify(cart), e => console.log(e));
+      fs.writeFile(p, JSON.stringify(cart), (e) => {
+        console.log(e);
+      });
     });
   }
+
+
+  static getCart(cb) {
+    fs.readFile(p, (err, fileContent) => {
+      const cart = JSON.parse(fileContent);
+      if (err) {
+        cb(null);
+      }
+      else {
+        cb(cart);
+      }
+    });
+  }
+
+  static deleteProduct(id, productPrice) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        return;
+      }
+      const updatedCart = { ...JSON.parse(fileContent) };
+      const product = updatedCart.products.find(prod => prod.id === id);
+      const productQty = product.qty;
+      updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+      updatedCart.totalPrice -= productPrice * productQty;
+      fs.writeFile(p, JSON.stringify(updatedCart), e => console.log(e));
+    });
+  }
+
+
 };
