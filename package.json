@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/express": "^4.17.0",
     "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "nodemon": "^1.19.1"
@@ -22,5 +23,33 @@
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "pug": "^2.0.4"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "es6": true,
+      "browser": true
+    },
+    "rules": {
+      "brace-style": [
+        "error",
+        "stroustrup"
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+      "no-unused-vars": [
+        "warn"
+      ],
+      "no-var": [
+        "off"
+      ],
+      "one-var": [
+        "off"
+      ],
+      "no-console": "off",
+      "dot-notation": "off"
+    }
   }
 }
