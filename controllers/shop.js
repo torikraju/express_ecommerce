@@ -28,6 +28,12 @@ exports.getCart = (req, res, next) => {
     });
 };
 
+exports.postCart = (req, res, next) => {
+    const prodId = req.body['productId'];
+    console.log(prodId);
+    res.redirect('/cart');
+};
+
 exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', {
         path: '/checkout',
@@ -52,5 +58,4 @@ exports.getProduct = (req, res, next) => {
             pageTitle: product['title']
         });
     });
-
 };
