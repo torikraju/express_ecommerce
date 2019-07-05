@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const db = require('./util/database');
+const sequelize = require('./util/database');
+
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
@@ -26,5 +27,9 @@ app.use(shopRoutes);
 // catch 404 error
 app.use(errorController.get404);
 
-
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+// crates tables for us
+sequelize.sync()
+  .then(() => {
+    app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+  })
+  .catch(e => console.log(e));

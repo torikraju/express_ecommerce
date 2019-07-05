@@ -82,12 +82,13 @@ exports.getOrders = (req, res, next) => {
 
 
 exports.getProduct = (req, res, next) => {
-  const prodId = req.params['productId'];
-  Product.findById(prodId, (product) => {
-    res.render('shop/product-detail', {
-      product,
-      path: '/products',
-      pageTitle: product.title
-    });
-  });
+  Product.findById(req.params['productId'])
+    .then(([rows]) => {
+      res.render('shop/product-detail', {
+        product: rows[0],
+        path: '/products',
+        pageTitle: rows[0].title
+      });
+    })
+    .catch(e => console.log(e));
 };
