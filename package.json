@@ -53,7 +53,8 @@
       "no-console": "off",
       "dot-notation": "off",
       "array-callback-return": "off",
-      "arrow-parens": "off"
+      "arrow-parens": "off",
+      "consistent-return": "off"
     }
   }
 }

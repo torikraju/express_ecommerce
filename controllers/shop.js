@@ -65,7 +65,6 @@ exports.postCartDeleteProduct = (req, res, next) => {
   });
 };
 
-
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
@@ -79,7 +78,6 @@ exports.getOrders = (req, res, next) => {
     pageTitle: 'Your Orders'
   });
 };
-
 
 exports.getProduct = (req, res) => {
   Product.findByPk(req.params['productId'])
