@@ -15,13 +15,6 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 
-db.execute('select * from products')
-  .then((response) => {
-    console.log(response[0]);
-  })
-  .catch(e => console.log(e));
-
-
 // for form body
 app.use(bodyParser.urlencoded({ extended: false }));
 // for serving static file
