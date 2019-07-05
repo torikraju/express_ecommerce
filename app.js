@@ -30,6 +30,15 @@ app.use(shopRoutes);
 // catch 404 error
 app.use(errorController.get404);
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(e => console.log(e));
+});
+
 // relationship definition
 Product.belongsTo(User, {
   constraints: true,
@@ -40,7 +49,16 @@ User.hasMany(Product);
 
 // crates tables for us
 sequelize.sync({ force: false })
-  .then(() => {
-    app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+  .then(() => User.findByPk(1))
+  .then(user => {
+    if (!user) {
+      // crate a user  dummy
+      return User.create({
+        name: 'torikul alam',
+        email: 'torikraju@gmail.com'
+      });
+    }
+    return Promise.resolve(user);
   })
+  .then(() => app.listen(port, () => console.log(`Example app listening on port ${port}!`)))
   .catch(e => console.log(e));
