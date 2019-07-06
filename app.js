@@ -52,7 +52,7 @@ Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
 // crates tables for us
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(() => User.findByPk(1))
   .then(user => {
     if (!user) {
@@ -64,5 +64,6 @@ sequelize.sync({ force: true })
     }
     return Promise.resolve(user);
   })
+  .then(user => user.createCart())
   .then(() => app.listen(port, () => console.log(`Example app listening on port ${port}!`)))
   .catch(e => console.log(e));

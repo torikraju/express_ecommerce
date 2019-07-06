@@ -27,25 +27,16 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.getCart((cart) => {
-    Product.fetchAll((products) => {
-      const cartProduct = [];
-      products.map((product) => {
-        const catProductData = cart.products.find(prod => prod.id === product.id);
-        if (catProductData) {
-          cartProduct.push({
-            productData: product,
-            qty: catProductData.qty
-          });
-        }
-        res.render('shop/cart', {
-          path: '/cart',
-          pageTitle: 'Your Cart',
-          products: cartProduct
-        });
+  req.user.getCart()
+    .then(cart => cart.getProducts())
+    .then(products => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products
       });
-    });
-  });
+    })
+    .catch(e => console.log(e));
 };
 
 exports.postCart = (req, res, next) => {
