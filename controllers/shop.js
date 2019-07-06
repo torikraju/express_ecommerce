@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 
-exports.getProducts = (req, res, next) => {
+exports.getProducts = (req, res) => {
   Product.findAll()
     .then(products => {
       res.render('shop/product-list', {
@@ -13,7 +13,7 @@ exports.getProducts = (req, res, next) => {
     .catch(e => console.log(e));
 };
 
-exports.getIndex = (req, res, next) => {
+exports.getIndex = (req, res) => {
   Product.findAll()
     .then(products => {
       res.render('shop/index', {
@@ -25,7 +25,7 @@ exports.getIndex = (req, res, next) => {
     .catch(e => console.log(e));
 };
 
-exports.getCart = (req, res, next) => {
+exports.getCart = (req, res) => {
   req.user.getCart()
     .then(cart => cart.getProducts())
     .then(products => {
@@ -76,7 +76,7 @@ exports.postCartDeleteProduct = (req, res) => {
     .catch(e => console.log(e));
 };
 
-exports.getCheckout = (req, res, next) => {
+exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
     path: '/checkout',
     pageTitle: 'Checkout'
