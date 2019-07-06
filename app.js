@@ -24,20 +24,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // for serving static file
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminRoutes.router);
-app.use(shopRoutes);
-
-// catch 404 error
-app.use(errorController.get404);
-
 app.use((req, res, next) => {
   User.findByPk(1)
     .then(user => {
       req.user = user;
       next();
     })
-    .catch(e => console.log(e));
+    .catch(err => console.log(err));
 });
+
+app.use('/admin', adminRoutes.router);
+app.use(shopRoutes);
+
+// catch 404 error
+app.use(errorController.get404);
 
 // relationship definition
 Product.belongsTo(User, {
