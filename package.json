@@ -54,7 +54,8 @@
       "dot-notation": "off",
       "array-callback-return": "off",
       "arrow-parens": "off",
-      "consistent-return": "off"
+      "consistent-return": "off",
+      "no-param-reassign": [2, { "props": false }]
     }
   }
 }
