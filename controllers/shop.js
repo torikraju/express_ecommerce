@@ -83,12 +83,6 @@ exports.getCheckout = (req, res, next) => {
   });
 };
 
-exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    path: '/orders',
-    pageTitle: 'Your Orders'
-  });
-};
 
 exports.getProduct = (req, res) => {
   Product.findByPk(req.params['productId'])
@@ -102,21 +96,36 @@ exports.getProduct = (req, res) => {
     .catch(e => console.log(e));
 };
 
-exports.postOrder = (req, res, next) => {
+exports.getOrders = (req, res) => {
+  req.user
+    .getOrders({ include: ['products'] })
+    .then(orders => res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders
+    }))
+    .catch(err => console.log(err));
+};
+
+exports.postOrder = (req, res) => {
   let cart;
+  let products;
   req.user.getCart()
     .then(_cart => {
       cart = _cart;
       return _cart.getProducts();
     })
-    .then(products => req.user.createOrder()
-      .then(order => {
-        order.addProducts(products.map(product => {
-          product.orderItem = { quantity: product['cartItem'].quantity };
-          return product;
-        }));
-      })
-      .catch(e => console.log(e)))
-    .then(result => req.redirect('/orders'))
+    .then(_products => {
+      products = _products;
+      return req.user.createOrder();
+    })
+    .then(order => {
+      order.addProducts(products.map(product => {
+        product.orderItem = { quantity: product['cartItem'].quantity };
+        return product;
+      }));
+    })
+    .then(() => cart.setProducts(null))
+    .then(() => res.redirect('/orders'))
     .catch(e => console.log(e));
 };
