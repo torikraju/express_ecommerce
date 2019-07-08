@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // for serving static file
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminRoutes.router);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 // catch 404 error
