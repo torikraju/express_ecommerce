@@ -2,9 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const mongoConnect = require('./util/database');
+const { mongoConnect } = require('./util/database');
 
-// const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 // const shopRoutes = require('./routes/shop');
 
 const errorController = require('./controllers/error');
@@ -22,13 +22,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // for serving static file
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/admin', adminRoutes.router);
+app.use('/admin', adminRoutes.router);
 // app.use(shopRoutes);
 
 // catch 404 error
 app.use(errorController.get404);
 
-mongoConnect(client => {
-  console.log(client);
+mongoConnect(() => {
   app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 });
