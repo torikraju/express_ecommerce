@@ -83,11 +83,11 @@ exports.getOrders = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   Product.findById(req.params['productId'])
-    .then(([rows]) => {
+    .then(product => {
       res.render('shop/product-detail', {
-        product: rows[0],
+        product,
         path: '/products',
-        pageTitle: rows[0].title
+        pageTitle: product.title
       });
     })
     .catch(e => console.log(e));
