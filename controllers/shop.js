@@ -12,7 +12,7 @@ exports.getProducts = (req, res) => {
     .catch(err => console.log(err));
 };
 
-exports.getProduct = (req, res, next) => {
+exports.getProduct = (req, res) => {
   Product.findById(req.params['productId'])
     .then(product => {
       res.render('shop/product-detail', {
@@ -24,7 +24,7 @@ exports.getProduct = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-exports.getIndex = (req, res, next) => {
+exports.getIndex = (req, res) => {
   Product.fetchAll()
     .then(products => {
       res.render('shop/index', {
@@ -57,7 +57,7 @@ exports.postCart = (req, res) => {
     .catch(e => console.log(e));
 };
 
-exports.postCartDeleteProduct = (req, res, next) => {
+exports.postCartDeleteProduct = (req, res) => {
   req.user
     .deleteItemFromCart(req.body.productId)
     .then(() => {
@@ -66,27 +66,10 @@ exports.postCartDeleteProduct = (req, res, next) => {
     .catch(e => console.log(e));
 };
 
-exports.postOrder = (req, res, next) => {
-  let fetchedCart;
+exports.postOrder = (req, res) => {
   req.user
-    .getCart()
-    .then(cart => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then(products => req.user
-      .createOrder()
-      .then(order => order.addProducts(
-        products.map(product => {
-          product.orderItem = { quantity: product.cartItem.quantity };
-          return product;
-        })
-      ))
-      .catch(err => console.log(err)))
-    .then(result => fetchedCart.setProducts(null))
-    .then(result => {
-      res.redirect('/orders');
-    })
+    .addOrder()
+    .then(() => res.redirect('/orders'))
     .catch(err => console.log(err));
 };
 
