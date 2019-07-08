@@ -3,27 +3,27 @@ const Cart = require('../models/cart');
 
 
 exports.getProducts = (req, res, next) => {
-  // Product.fetchAll()
-  //   .then(([rows, fielddData]) => {
-  //     res.render('shop/product-list', {
-  //       prods: rows,
-  //       pageTitle: 'All Products',
-  //       path: '/products'
-  //     });
-  //   })
-  //   .catch(e => console.log(e));
+  Product.fetchAll()
+    .then(products => {
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'All Products',
+        path: '/products'
+      });
+    })
+    .catch(e => console.log(e));
 };
 
 exports.getIndex = (req, res, next) => {
-  // Product.fetchAll()
-  //   .then(([rows, fielddData]) => {
-  //     res.render('shop/index', {
-  //       prods: rows,
-  //       pageTitle: 'Shop',
-  //       path: '/'
-  //     });
-  //   })
-  //   .catch(e => console.log(e));
+  Product.fetchAll()
+    .then(products => {
+      res.render('shop/index', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/'
+      });
+    })
+    .catch(e => console.log(e));
 };
 
 exports.getCart = (req, res, next) => {
