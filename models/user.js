@@ -96,7 +96,6 @@ class User {
       .toArray();
   }
 
-
   static findById(userId) {
     const db = getDb();
     return db
