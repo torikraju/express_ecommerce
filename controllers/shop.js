@@ -112,10 +112,22 @@ exports.postOrder = (req, res, next) => {
 exports.getOrders = (req, res, next) => {
   Order.find({ 'user.userId': req.user._id })
     .then(orders => {
+      const _orders = orders.map(order => {
+        let totalPrice = 0;
+        order.products.map(p => {
+          totalPrice += p.product.price * p.quantity;
+        });
+        return (
+          {
+            ...order,
+            totalPrice: totalPrice.toFixed(2)
+          }
+        );
+      });
       res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
-        orders,
+        orders: _orders,
         isAuthenticated: req.session.isLoggedIn
       });
     })
