@@ -1,6 +1,7 @@
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -10,8 +11,8 @@ const User = require('./models/user');
 
 const { MONGODB_URI } = require('./util/string');
 
-
 const app = express();
+const port = 3001;
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
@@ -24,10 +25,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
-
-// for form body
 app.use(bodyParser.urlencoded({ extended: false }));
-// for serving static file
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
@@ -38,24 +36,29 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   User.findById('5d242c39606f226cd1e3007d')
-//     .then(user => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch(err => console.log(err));
-// });
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-// catch 404 error
 app.use(errorController.get404);
 
 mongoose
-  .connect(MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false })
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useFindAndModify: false
+  })
   .then(() => User.findOne())
   .then(user => {
     if (!user) {
@@ -69,5 +72,5 @@ mongoose
       return _user.save();
     }
   })
-  .then(() => app.listen(3001, () => console.log(`Example app listening on port ${3001}!`)))
+  .then(() => app.listen(port, () => console.log(`Example app listening on port ${port}!`)))
   .catch(e => console.log(e));
