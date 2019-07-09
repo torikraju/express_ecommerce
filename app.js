@@ -10,7 +10,7 @@ const shopRoutes = require('./routes/shop');
 
 const errorController = require('./controllers/error');
 
-const User = require('./models/user');
+// const User = require('./models/user');
 
 
 const app = express();
@@ -26,12 +26,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('5d23245eb9bdf42f457370df')
-    .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    })
-    .catch(err => console.log(err));
+  // User.findById('5d23245eb9bdf42f457370df')
+  //   .then(user => {
+  //     req.user = new User(user.name, user.email, user.cart, user._id);
+  //     next();
+  //   })
+  //   .catch(err => console.log(err));
+  next();
 });
 
 app.use('/admin', adminRoutes);
