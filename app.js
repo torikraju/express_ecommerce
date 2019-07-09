@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
 
-const { mongoConnect } = require('./util/database');
+const { DB_URL } = require('./util/string');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -39,6 +40,6 @@ app.use(shopRoutes);
 // catch 404 error
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-});
+mongoose.connect(DB_URL, { useNewUrlParser: true })
+  .then(() => app.listen(port, () => console.log(`Example app listening on port ${port}!`)))
+  .catch(e => console.log(e));

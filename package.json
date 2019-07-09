@@ -21,7 +21,8 @@
     "body-parser": "^1.19.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
-    "mongodb": "^3.2.7"
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.6.4"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
