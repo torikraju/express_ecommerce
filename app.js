@@ -7,6 +7,8 @@ const { DB_URL } = require('./util/string');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+
 
 const errorController = require('./controllers/error');
 
@@ -36,6 +38,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 // catch 404 error
 app.use(errorController.get404);
