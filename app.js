@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const { DB_URL } = require('./util/string');
 
@@ -17,6 +19,10 @@ const User = require('./models/user');
 
 const app = express();
 const port = 3001;
+const store = new MongoDBStore({
+  uri: DB_URL,
+  collection: 'sessions'
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -26,6 +32,13 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({ extended: false }));
 // for serving static file
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+  store
+}));
 
 app.use((req, res, next) => {
   User.findById('5d242c39606f226cd1e3007d')
