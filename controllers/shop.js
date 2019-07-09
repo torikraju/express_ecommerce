@@ -88,15 +88,26 @@ exports.postOrder = (req, res) => {
     });
 };
 
-exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders({ include: ['products'] })
+exports.getOrders = (req, res) => {
+  Order.find({ 'user.userId': req.user._id })
     .then(orders => {
+      const _orders = orders.map(order => {
+        let totalPrice = 0;
+        order.products.map(p => {
+          totalPrice += p.product.price * p.quantity;
+        });
+        return (
+          {
+            ...order,
+            totalPrice: totalPrice.toFixed(2)
+          }
+        );
+      });
       res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
-        orders
+        orders: _orders
       });
     })
-    .catch(err => console.log(err));
+    .catch(e => console.log(e));
 };
