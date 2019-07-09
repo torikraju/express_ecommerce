@@ -40,7 +40,10 @@ app.use(shopRoutes);
 // catch 404 error
 app.use(errorController.get404);
 
-mongoose.connect(DB_URL, { useNewUrlParser: true })
+mongoose.connect(DB_URL, {
+  useNewUrlParser: true,
+  useFindAndModify: false
+})
   .then(() => User.findOne())
   .then(user => {
     if (!user) {
