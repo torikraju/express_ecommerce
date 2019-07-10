@@ -2,10 +2,18 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 exports.getLogin = (req, res) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    // eslint-disable-next-line prefer-destructuring
+    message = message[0];
+  }
+  else {
+    message = null;
+  }
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: req.flash('error')
+    errorMessage: message
   });
 };
 
@@ -24,7 +32,6 @@ exports.postLogin = (req, res) => {
             req.session.user = user;
             return req.session.save(err => {
               console.log(err);
-              req.flash('error', 'Invalid email or password.');
               res.redirect('/');
             });
           }
