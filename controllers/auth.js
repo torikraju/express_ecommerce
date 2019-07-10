@@ -35,6 +35,7 @@ exports.postLogin = (req, res) => {
               res.redirect('/');
             });
           }
+          req.flash('error', 'Invalid email or password.');
           res.redirect('/login');
         })
         .catch(e => {
@@ -53,9 +54,18 @@ exports.postLogout = (req, res) => {
 };
 
 exports.getSignup = (req, res) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    // eslint-disable-next-line prefer-destructuring
+    message = message[0];
+  }
+  else {
+    message = null;
+  }
   res.render('auth/signup', {
     path: '/signup',
-    pageTitle: 'Signup'
+    pageTitle: 'Signup',
+    errorMessage: message
   });
 };
 
@@ -64,6 +74,7 @@ exports.postSignup = (req, res) => {
   User.findOne({ email })
     .then(userDoc => {
       if (userDoc) {
+        req.flash('error', 'E-Mail exists already, please pick a different one.');
         return res.redirect('/signup');
       }
       return bcrypt.hash(password, 12)
