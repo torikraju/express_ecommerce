@@ -91,3 +91,4 @@ typings/
 .history
 .idea
 .vscode
+util/string.js
