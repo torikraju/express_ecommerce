@@ -38,25 +38,25 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password } = req.body;
   User.findOne({ email })
     .then(userDoc => {
       if (userDoc) {
         return res.redirect('/signup');
       }
-      return bcrypt.hash(password, 12);
-    })
-    .then(hashedPassword => {
-      const user = new User({
-        email,
-        password: hashedPassword,
-        cart: { items: [] }
-      });
-      user.save()
-        .then(result => {
-          res.redirect('/');
-        })
-        .catch(e => console.log(e));
+      return bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+          const user = new User({
+            email,
+            password: hashedPassword,
+            cart: { items: [] }
+          });
+          user.save()
+            .then(() => {
+              res.redirect('/');
+            })
+            .catch(e => console.log(e));
+        });
     })
     .catch(err => console.log(err));
 };
