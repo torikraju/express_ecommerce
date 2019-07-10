@@ -59,18 +59,5 @@ mongoose
     useNewUrlParser: true,
     useFindAndModify: false
   })
-  .then(() => User.findOne())
-  .then(user => {
-    if (!user) {
-      const _user = new User({
-        name: 'torikul',
-        email: 'torikraju@gmail.com',
-        cart: {
-          items: []
-        }
-      });
-      return _user.save();
-    }
-  })
   .then(() => app.listen(port, () => console.log(`Example app listening on port ${port}!`)))
   .catch(e => console.log(e));
