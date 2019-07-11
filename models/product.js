@@ -34,7 +34,7 @@ productSchema.post('remove', product => {
     { $pull: { 'cart.items': { productId: product._id } } },
     { multi: true }
   )
-    .then(result => console.log(result))
+    .then(() => console.log('Item remove form cart'))
     .catch(e => console.log(e));
 });
 
