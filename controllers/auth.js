@@ -5,7 +5,7 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
 const { SENDGRID_API_KEYS } = require('../util/string');
-const { SIGN_UP_SUCCESS, RESET_PASSWORD, NO_REPLAY } = require('../util/emailRelatedStuff');
+const { SIGN_UP_SUCCESS, NO_REPLAY } = require('../util/emailRelatedStuff');
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
@@ -135,7 +135,6 @@ exports.postReset = (req, res) => {
       .catch(e => console.log(e));
   });
 };
-
 
 exports.getNewPassword = (req, res) => {
   const { token } = req.params;
