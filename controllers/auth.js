@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 const { SENDGRID_API_KEYS } = require('../util/string');
-const { SIGN_UP_SUCCESS, NO_REPLAY } = require('../util/emailRelatedStuff');
+const { SIGN_UP_SUCCESS, NO_REPLAY, RESET_PASSWORD } = require('../util/emailRelatedStuff');
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
@@ -184,7 +184,7 @@ exports.postReset = (req, res) => {
         to: req.body.email,
         from: NO_REPLAY,
         subject: 'Password reset',
-        html: `<p>You requested a password reset</p><p>Click this <a href="http://localhost:3001/reset/${token}">link</a> to set a new password.</p>`
+        html: RESET_PASSWORD(token)
       }))
       .then(() => res.redirect('/'))
       .catch(e => console.log(e));
