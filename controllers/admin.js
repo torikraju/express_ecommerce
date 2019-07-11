@@ -146,13 +146,14 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  Product.deleteOne({
+  Product.findOne({
     _id: req.body.productId,
     userId: req.user._id
   })
+    .then(product => product.remove())
     .then(() => res.redirect('/admin/products'))
-    .catch(err => {
-      const error = new Error(err);
+    .catch(e => {
+      const error = new Error(e);
       error.httpStatusCode = 500;
       return next(error);
     });
