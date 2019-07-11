@@ -72,14 +72,11 @@ exports.getProducts = (req, res, next) => {
   Product.find({ userId: req.user._id })
   // .select('title price -_id')
   // .populate('userId', 'name')
-    .then(products => {
-      console.log(products);
-      res.render('admin/products', {
-        prods: products,
-        pageTitle: 'Admin Products',
-        path: '/admin/products'
-      });
-    })
+    .then(products => res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin Products',
+      path: '/admin/products'
+    }))
     .catch(err => console.log(err));
 };
 

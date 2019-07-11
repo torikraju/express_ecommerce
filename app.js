@@ -14,7 +14,7 @@ const User = require('./models/user');
 const { MONGODB_URI } = require('./util/string');
 
 const app = express();
-const port = 3001;
+const port = 3000;
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
