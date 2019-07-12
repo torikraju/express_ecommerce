@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const { STRIPE_SECRET_KEY } = require('../util/string');
+// eslint-disable-next-line import/order
+const stripe = require('stripe')(STRIPE_SECRET_KEY);
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -10,7 +13,6 @@ const ITEMS_PER_PAGE = 1;
 exports.getProducts = (req, res) => {
   Product.find()
     .then(products => {
-      console.log(products);
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'All Products',
@@ -35,7 +37,7 @@ exports.getProduct = (req, res) => {
     .catch(err => console.log(err));
 };
 
-exports.getIndex = (req, res) => {
+exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
@@ -86,10 +88,8 @@ exports.postCart = (req, res) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then(product => req.user.addToCart(product))
-    .then(result => {
-      console.log(result);
-      res.redirect('/cart');
-    });
+    .then(() => res.redirect('/cart'))
+    .catch(e => console.log(e));
 };
 
 exports.postCartDeleteProduct = (req, res) => {
@@ -100,11 +100,41 @@ exports.postCartDeleteProduct = (req, res) => {
     .catch(err => console.log(err));
 };
 
-exports.postOrder = (req, res) => {
+exports.getCheckout = (req, res, next) => {
   req.user
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
+      const products = user.cart.items;
+      let total = 0;
+      products.forEach(p => {
+        total += p.quantity * p.productId.price;
+      });
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products,
+        totalSum: total
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.postOrder = (req, res) => {
+  const token = req.body['stripeToken'];
+  let totalSum = 0;
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      user.cart.items.forEach(p => {
+        totalSum += p.quantity * p.productId.price;
+      });
+
       const products = user.cart.items.map(i => ({
         quantity: i.quantity,
         product: { ...i.productId._doc }
@@ -118,7 +148,16 @@ exports.postOrder = (req, res) => {
       });
       return order.save();
     })
-    .then(() => req.user.clearCart())
+    .then(result => {
+      stripe.charges.create({
+        amount: Math.ceil(totalSum) * 100,
+        currency: 'usd',
+        description: 'Demo Order',
+        source: token,
+        metadata: { order_id: result._id.toString() }
+      });
+      req.user.clearCart();
+    })
     .then(() => {
       res.redirect('/orders');
     })
