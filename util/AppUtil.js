@@ -12,5 +12,5 @@ exports.getUUID = () => uuid.v1()
   .join('');
 
 exports.deleteFile = file => {
-  fs.unlinkSync(file);
+  fs.unlinkSync(file.substring(1));
 };

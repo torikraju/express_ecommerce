@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const User = require('./user');
+const { deleteFile } = require('../util/AppUtil');
+
 
 const productSchema = new Schema({
   title: {
@@ -29,12 +31,13 @@ const productSchema = new Schema({
 });
 
 productSchema.post('remove', product => {
+  console.log(product);
   User.update(
     {},
     { $pull: { 'cart.items': { productId: product._id } } },
     { multi: true }
   )
-    .then(() => console.log('Item remove form cart'))
+    .then(() => deleteFile(product['imageUrl']))
     .catch(e => console.log(e));
 });
 
