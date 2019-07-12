@@ -174,16 +174,14 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.deleteProduct = (req, res) => {
   Product.findOne({
-    _id: req.body.productId,
+    _id: req.params.productId,
     userId: req.user._id
   })
     .then(product => product.remove())
-    .then(() => res.redirect('/admin/products'))
-    .catch(e => {
-      const error = new Error(e);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
+    .then(() => res.status(200)
+      .json({ message: 'Success' }))
+    .catch(() => res.status(500)
+      .json({ message: 'Deleting product failed' }));
 };
