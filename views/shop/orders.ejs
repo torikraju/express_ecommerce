@@ -15,7 +15,7 @@
                     <ul class="orders__products">
                         <% order._doc.products.forEach(p => { %>
                             <li class="orders__products-item">Name: <%= p.product.title %> Quantity: (<%= p.quantity %>)
-                                Price: <%= p.product.price %> - <a href="/orders/<%= order._id %>">Invoice</a></li>
+                                Price: <%= p.product.price %> - <a href="/orders/<%= order._doc._id %>">Invoice</a></li>
                         <% }); %>
                         <li class="orders__products-item">SubTotal: <%= order.totalPrice %></li>
                     </ul>
