@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 
 const Product = require('../models/product');
+const { deleteFile } = require('../util/AppUtil');
 
 
 exports.getAddProduct = (req, res) => {
@@ -139,12 +140,14 @@ exports.postEditProduct = (req, res, next) => {
       product.title = title;
       product.price = price;
       product.description = description;
+      let file;
       if (image) {
-        product.imageUrl = image.path;
+        file = product.imageUrl;
+        product.imageUrl = `/${image.path}`;
       }
       return product.save()
         .then(() => {
-          console.log('UPDATED PRODUCT!');
+          if (file) deleteFile(file);
           res.redirect('/admin/products');
         });
     })

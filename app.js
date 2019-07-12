@@ -13,6 +13,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const { MONGODB_URI } = require('./util/string');
+const { getFileExtension, getUUID } = require('./util/AppUtil');
 
 const app = express();
 const port = 3000;
@@ -27,7 +28,7 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, `${new Date().getUTCMilliseconds()}-${file.originalname}`);
+    cb(null, `${getUUID()}.${getFileExtension(file)}`);
   }
 });
 
@@ -59,6 +60,7 @@ app.use(multer({
 })
   .single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(
   session({
     secret: 'my secret',
