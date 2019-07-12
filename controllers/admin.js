@@ -16,8 +16,27 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = (req, res, next) => {
   const {
-    title, imageUrl, price, description
+    title, price, description
   } = req.body;
+  const image = req.file;
+
+  if (!image) {
+    return res.status(422)
+      .render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/edit-product',
+        editing: false,
+        hasError: true,
+        product: {
+          title,
+          price,
+          description
+        },
+        errorMessage: 'Attached file is not an image',
+        validationErrors: []
+      });
+  }
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors.array());
@@ -29,7 +48,6 @@ exports.postAddProduct = (req, res, next) => {
         hasError: true,
         product: {
           title,
-          imageUrl,
           price,
           description
         },
@@ -37,6 +55,8 @@ exports.postAddProduct = (req, res, next) => {
         validationErrors: errors.array()
       });
   }
+
+  const imageUrl = image.path;
 
   const product = new Product({
     title,
@@ -86,10 +106,12 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const {
-    title, price, imageUrl, description
+    title, price, description
   } = req.body;
+  const image = req.file;
 
   const errors = validationResult(req);
+
 
   if (!errors.isEmpty()) {
     return res.status(422)
@@ -100,7 +122,6 @@ exports.postEditProduct = (req, res, next) => {
         hasError: true,
         product: {
           title,
-          imageUrl,
           price,
           description,
           _id: prodId
@@ -110,20 +131,25 @@ exports.postEditProduct = (req, res, next) => {
       });
   }
 
-  Product.findOneAndUpdate({
-    userId: req.user._id,
-    _id: req.body.productId
-  }, {
-    $set: {
-      title,
-      price,
-      imageUrl,
-      description
-    }
-  }, { new: true })
-    .then(() => res.redirect('/admin/products'))
-    .catch(e => {
-      const error = new Error(e);
+  Product.findById(prodId)
+    .then(product => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect('/');
+      }
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      if (image) {
+        product.imageUrl = image.path;
+      }
+      return product.save()
+        .then(() => {
+          console.log('UPDATED PRODUCT!');
+          res.redirect('/admin/products');
+        });
+    })
+    .catch(err => {
+      const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
     });
